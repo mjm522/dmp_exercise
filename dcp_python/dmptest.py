@@ -1,7 +1,6 @@
 import numpy as np
 
-def dmptest(w, paras):
-    global exercise_id
+def dmptest(w, paras, exercise_id):
 
     kernelfcn = paras['kernelfcn']
     goals = paras['goals']
@@ -14,23 +13,24 @@ def dmptest(w, paras):
 
     if not ('extForce' in  paras.keys()):
         extForce = np.array([0,0,0,0])
-    else
+    else:
         extForce = paras['extForce']
 
-    u = 1
+    u = 1.
     ax = paras['ax']
 
     id = 1
     yreal = y
     dyreal = dy
-    Y[id,:] = yreal
-    timestamps[id] = 0
+    Y = yreal
+    timestamps = np.array([0])
     t = 0
     while u > 1e-3:
         id = id + 1
-        kf = kernelfcn(u)
-        forces = w.T * kf / np.sum(kf)
+        kf = kernelfcn(np.array([[u]]))
 
+        forces = np.dot(w.T, kf/np.sum(kf))
+        
         if  exercise_id == 1:
             scaling = np.multiply((goals - paras['y0']), 1./paras['original_scaling'])
             ddy = K * (goals - y) - D * dy + np.multiply(scaling, forces.T) * u
@@ -43,7 +43,7 @@ def dmptest(w, paras):
         y = y + dy * dt/tau
 
         if  exercise_id == 1 or exercise_id == 2:
-            Y[id,:] = y
+            Y = np.vstack([Y,y])
         elif  exercise_id == 3:
             Ky = 300
             Dy = np.sqrt(4*Ky)
@@ -53,7 +53,7 @@ def dmptest(w, paras):
             
             dyreal = dyreal + ddyreal * dt
             yreal = yreal + dyreal * dt
-            Y[id,:] = yreal
+            Y = np.vstack([Y,yreal])
         
         #canonical system
         if  exercise_id == 1 or exercise_id == 2:
@@ -63,8 +63,8 @@ def dmptest(w, paras):
             u = u + 1/tau * ax * u * dt / phasestop
 
         t = t + dt
-        timestamps[id] = t
+        timestamps = np.hstack([timestamps, t])
 
-    traj = [timestamps.T,Y]
+    traj = np.hstack([np.asarray(timestamps)[:,None], Y])
 
     return traj
