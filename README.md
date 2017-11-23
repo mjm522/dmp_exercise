@@ -1,4 +1,8 @@
-# dmp_exercise
+# DMP 
 
-You can put your results in this google-doc: <br />
-https://docs.google.com/document/d/1Z_0pN8gPaL23eCXulKgOKLkm5xibQw6gsaucNtBcLUY/edit?usp=sharing
+Step 1 : Run set_env.m
+Step 2 : Run recordTrajectory.m
+Step 3 : Use the figure to draw a trajectory and close the window
+Step 4 : Run train.m
+Step 5 : Run test.m
+Step 6 : Run drawRobot.m
